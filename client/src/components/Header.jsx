@@ -14,8 +14,6 @@ const Header = () => {
     const changeColor = () => {
         if (typeof window !== "undefined") {
 
-            console.log(window.scrollY)
-
             if (window.scrollY >= 1) {
                 setColor(true);
             } else {
@@ -30,9 +28,9 @@ const Header = () => {
 
 
     return (
-        <header className={`w-full inset-x-0 z-50 transition-all duration-300 ease-in-out fixed flex justify-center  items-center ${color ? "bg-white" : "bg-transparent"}`}>
+        <header className={`w-full fixed inset-x-0 z-50 transition-all duration-300 ease-in-out  flex justify-center  items-center ${color ? "bg-white" : "bg-transparent"}`}>
 
-            <div className='flex py-3 justify-between items-center w-11/12'>
+            <div className='flex py-3 justify-between gap-10 items-center w-11/12'>
 
 
                 {/* image section */}
@@ -49,9 +47,8 @@ const Header = () => {
                 <div className=' flex gap-5 justify-center items-center'>
                     {/* login */}
                     <Link to="/login">
-                        <p className='hover:bg-[black]/[0.05] transition-all ease-in-out duration-300 font-semibold px-4 rounded-full py-2 '>Login</p>
+                        <p className={` ${color ? "text-black hover:bg-[black]/[0.05]" : "text-white hover:bg-[white]/[0.15]"} transition-all ease-in-out duration-300 font-semibold px-4 rounded-full py-2 `}>Login</p>
                     </Link>
-
                     {/* upload */}
                     <Link to="/">
                         <div
