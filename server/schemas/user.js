@@ -21,7 +21,7 @@ export default defineType({
             type: "string"
         }),
         defineField({
-            name: "phoneeNumber",
+            name: "phoneNumber",
             title: "Contact Number",
             type: "string"
         }),

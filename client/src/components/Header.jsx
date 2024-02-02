@@ -3,12 +3,35 @@ import { Link } from "react-router-dom"
 import MainLogo from "../assets/MainLogo.svg";
 import { BiUpload } from "react-icons/bi";
 import { useState } from 'react';
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { firebaseAuth } from '../config/firebase.config';
+import { createNewUser } from '../sanity';
+import { SET_USER } from '../context/actions/userAction';
+import { useDispatch, useSelector } from "react-redux";
 
 
 const Header = () => {
 
-    const [user, setUser] = useState(null);
     const [color, setColor] = useState(false);
+    const dispatch = useDispatch();
+
+    const user = useSelector(state => state.user);
+
+    console.log("user: ", user);
+
+    const provider = new GoogleAuthProvider();
+
+    async function signInWithGmail() {
+        await signInWithPopup(firebaseAuth, provider)
+            .then((result) => {
+
+                console.log(result)
+                createNewUser(result?.user?.providerData?.[0])
+                    .then(() => {
+                        dispatch(SET_USER(result?.providerData[0]));
+                    });
+            })
+    }
 
 
     const changeColor = () => {
@@ -45,10 +68,28 @@ const Header = () => {
                 {/* user profile section */}
 
                 <div className=' flex gap-5 justify-center items-center'>
-                    {/* login */}
-                    <Link to="/login">
-                        <p className={` ${color ? "text-black hover:bg-[black]/[0.05]" : "text-white hover:bg-[white]/[0.15]"} transition-all ease-in-out duration-300 font-semibold px-4 rounded-full py-2 `}>Login</p>
-                    </Link>
+
+                    {
+                        user ? (
+                            // user profile
+                            <div className='relative cursor-pointer'>
+                                <img
+                                    src={user?.photoURL}
+                                    alt="profile"
+                                    className='h-10 w-10 object-cover rounded-full'
+                                />
+                            </div>
+
+                        ) : (
+                            // login 
+                            <button
+                                onClick={signInWithGmail}
+                            >
+                                <p className={` ${color ? "text-black hover:bg-[black]/[0.05]" : "text-white hover:bg-[white]/[0.15]"} transition-all ease-in-out duration-300 font-semibold px-4 rounded-full py-2 `}>Login</p>
+                            </button>
+                        )
+                    }
+
                     {/* upload */}
                     <Link to="/">
                         <div
@@ -60,11 +101,12 @@ const Header = () => {
                             </span>
                         </div>
                     </Link>
+
                 </div>
 
             </div>
 
-        </header>
+        </header >
     )
 }
 

@@ -43,7 +43,6 @@ const Home = () => {
                                 <option value="all-images">All images</option>
                             </select>
 
-
                         </div>
 
                     </div>
