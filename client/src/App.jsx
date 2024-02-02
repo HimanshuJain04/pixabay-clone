@@ -25,10 +25,12 @@ function App() {
           });
       }
     })
-    setIsLoading(false);
+
+    setInterval(() => {
+      setIsLoading(false);
+    }, 2000);
 
   }, []);
-
 
   return (
     <div className="flex overflow-x-hidden w-screen min-h-screen flex-col justify-start items-center">
