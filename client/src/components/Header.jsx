@@ -1,12 +1,38 @@
 import React from 'react';
 import { Link } from "react-router-dom"
-import MainLogo from "../assets/MainLogo.svg"
+import MainLogo from "../assets/MainLogo.svg";
+import { BiUpload } from "react-icons/bi";
+import { useState } from 'react';
+
 
 const Header = () => {
-    return (
-        <header className='w-full flex justify-center items-center'>
 
-            <div className='flex py-2 justify-between items-center w-11/12'>
+    const [user, setUser] = useState(null);
+    const [color, setColor] = useState(false);
+
+
+    const changeColor = () => {
+        if (typeof window !== "undefined") {
+
+            console.log(window.scrollY)
+
+            if (window.scrollY >= 1) {
+                setColor(true);
+            } else {
+                setColor(false);
+            }
+        }
+    }
+
+    if (typeof window !== "undefined") {
+        window.addEventListener("scroll", changeColor);
+    }
+
+
+    return (
+        <header className={`w-full inset-x-0 z-50 transition-all duration-300 ease-in-out fixed flex justify-center  items-center ${color ? "bg-white" : "bg-transparent"}`}>
+
+            <div className='flex py-3 justify-between items-center w-11/12'>
 
 
                 {/* image section */}
@@ -23,21 +49,23 @@ const Header = () => {
                 <div className=' flex gap-5 justify-center items-center'>
                     {/* login */}
                     <Link to="/login">
-                        <p>Login</p>
+                        <p className='hover:bg-[black]/[0.05] transition-all ease-in-out duration-300 font-semibold px-4 rounded-full py-2 '>Login</p>
                     </Link>
 
                     {/* upload */}
                     <Link to="/">
                         <div
-                            className='bg-green-600 hover:bg-green-500 transition-all duration-200 ease-in-out text-white font-semibold px-5 rounded-full py-2'
+                            className='bg-green-600 flex gap-1 justify-center items-center hover:bg-green-500 transition-all duration-300 ease-in-out text-white font-semibold px-4 rounded-full py-2'
                         >
-                            Upload
+                            <BiUpload fontSize={22} />
+                            <span>
+                                Upload
+                            </span>
                         </div>
                     </Link>
                 </div>
 
             </div>
-
 
         </header>
     )
