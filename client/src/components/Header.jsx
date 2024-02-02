@@ -1,35 +1,44 @@
 import React from 'react';
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import MainLogo from "../assets/MainLogo.svg";
 import { BiUpload } from "react-icons/bi";
 import { useState } from 'react';
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { firebaseAuth } from '../config/firebase.config';
 import { createNewUser } from '../sanity';
-import { SET_USER } from '../context/actions/userAction';
+import { SET_USER, SET_USER_NULL } from '../context/actions/userAction';
 import { useDispatch, useSelector } from "react-redux";
+import { mainMenu } from "../utils/supports";
 
 
 const Header = () => {
 
     const [color, setColor] = useState(false);
+    const [isMenu, setIsMenu] = useState(false);
+
     const dispatch = useDispatch();
 
-    const user = useSelector(state => state.user);
+    const navigate = useNavigate();
 
-    console.log("user: ", user);
+    const user = useSelector(state => state.user);
 
     const provider = new GoogleAuthProvider();
 
     async function signInWithGmail() {
         await signInWithPopup(firebaseAuth, provider)
             .then((result) => {
-
-                console.log(result)
                 createNewUser(result?.user?.providerData?.[0])
                     .then(() => {
-                        dispatch(SET_USER(result?.providerData[0]));
+                        dispatch(SET_USER(result?.user?.providerData[0]));
                     });
+            })
+    }
+
+    async function logout() {
+        await firebaseAuth.signOut()
+            .then(() => {
+                dispatch(SET_USER_NULL());
+                navigate("/", { replace: true })
             })
     }
 
@@ -66,7 +75,6 @@ const Header = () => {
                 </Link>
 
                 {/* user profile section */}
-
                 <div className=' flex gap-5 justify-center items-center'>
 
                     {
@@ -77,7 +85,36 @@ const Header = () => {
                                     src={user?.photoURL}
                                     alt="profile"
                                     className='h-10 w-10 object-cover rounded-full'
+                                    referrerPolicy='no-referrer'
+                                    onClick={() => {
+                                        setIsMenu(!isMenu)
+                                    }}
                                 />
+
+                                {
+                                    isMenu && (
+                                        <div className='absolute right-0 top-12 rounded-md shadow-md w-64 py-3 px-4 bg-[#191B26] flex flex-col items-start justify-center'>
+                                            <p className='text-gray-50 w-full overflow-hidden text-center py-1 font-semibold'>{user?.displayName}</p>
+                                            {
+                                                mainMenu && mainMenu.map((menu) => (
+                                                    <Link
+                                                        key={menu.id}
+                                                        to={`/newPost/${menu.slug}`}
+                                                        className='text-gray-300 hover:bg-[#2b2e41] w-full rounded-full px-2 py-2 pl-3 transition-all duration-200 ease-in-out'
+                                                    >{menu.name}</Link>
+                                                ))
+                                            }
+
+                                            <div className='w-full h-[1px] bg-gray-600 '></div>
+                                            <div
+                                                className='text-gray-300 text-lg w-full rounded-full px-2 py-1 pl-3'
+                                                onClick={logout}>
+                                                Logout
+                                            </div>
+                                        </div>
+                                    )
+                                }
+
                             </div>
 
                         ) : (
