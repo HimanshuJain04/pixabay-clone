@@ -60,7 +60,7 @@ const Header = () => {
 
 
     return (
-        <header className={`w-full fixed inset-x-0 z-50 transition-all duration-300 ease-in-out  flex justify-center  items-center ${color ? "bg-white" : "bg-transparent"}`}>
+        <header className={`w-full fixed border-b-2 border-[white]/[0.1] inset-x-0 z-50 transition-all duration-300 ease-in-out  flex justify-center  items-center ${color ? "bg-white" : "bg-transparent"}`}>
 
             <div className='flex py-3 justify-between gap-10 items-center w-11/12'>
 

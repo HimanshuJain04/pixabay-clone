@@ -15,14 +15,23 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import '../assets/css/swipercss.css';
 import 'swiper/css/bundle';
-import { deleteAssets, uploadAssets } from '../sanity';
+import { deleteAssets, uploadAssets, uploadPost } from '../sanity';
+import { useSelector } from "react-redux";
 
 
 const NewPost = () => {
 
     const [file, setFile] = useState(null);
-    const [category, setCategory] = useState("");
     const [loading, setLoading] = useState(false);
+    const user = useSelector(state => state.user);
+    const [formData, setFormData] = useState(
+        {
+            category: "",
+            title: "",
+            description: "",
+            tags: "",
+        }
+    );
 
 
     const isAllowed = (file1) => {
@@ -67,6 +76,94 @@ const NewPost = () => {
             setFile(null);
         });
         setLoading(false);
+    }
+
+
+    async function uploadHandler() {
+        if (formData.category === "" || formData.tags === "" || formData.title === "" || !file) {
+            alert("All fields are required");
+            return;
+        }
+
+        const keywords = formData.tags.split(",");
+
+        if (file?.mimeType?.split("/")[0] === "image") {
+
+            const _doc = {
+                _type: "post",
+                title: formData.title,
+                keywords: keywords,
+                description: formData.description,
+                fileSource: "image",
+                categories: formData.category,
+                user: {
+                    _type: "reference",
+                    _ref: user?.uid,
+                },
+                mainImage: {
+                    _type: "mainImage",
+                    assets: {
+                        _type: "reference",
+                        _ref: file?._id
+                    }
+                }
+            }
+
+            await uploadPost(_doc).then((res) => {
+                setFormData(
+                    {
+                        category: "",
+                        title: "",
+                        description: "",
+                        tags: "",
+                    }
+                );
+                setFile(null);
+
+                alert("File Uploaded");
+            }).catch(() => {
+                console.log("File Not uploaded")
+            });
+
+        } else {
+
+            const _doc = {
+                _type: "post",
+                title: formData.title,
+                keywords: keywords,
+                description: formData.description,
+                fileSource: "others",
+                categories: formData.category,
+                user: {
+                    _type: "reference",
+                    _ref: user?.uid,
+                },
+                otherMedia: {
+                    _type: "otherMedia",
+                    assets: {
+                        _type: "reference",
+                        _ref: file?._id
+                    }
+                }
+            }
+
+            await uploadPost(_doc).then((res) => {
+                setFormData(
+                    {
+                        category: "",
+                        title: "",
+                        description: "",
+                        tags: "",
+                    }
+                );
+                setFile(null);
+
+                alert("File Uploaded");
+            }).catch(() => {
+                console.log("File Not uploaded")
+            });
+
+        }
     }
 
     return (
@@ -129,6 +226,14 @@ const NewPost = () => {
                                                         className=' rounded-md font-semibold text-[black]/[0.8] w-full border-2 border-[black]/[0.1] py-2 px-2 outline-none'
                                                         required
                                                         placeholder='Your post title here'
+                                                        onChange={(e) => {
+                                                            setFormData(
+                                                                {
+                                                                    ...formData,
+                                                                    title: e.target.value
+                                                                }
+                                                            )
+                                                        }}
                                                     />
                                                 </div>
 
@@ -144,9 +249,14 @@ const NewPost = () => {
                                                         categories?.map((value) => (
                                                             <SwiperSlide key={value.id} className='py-1'>
                                                                 <div
-                                                                    className={`px-2 py-1 ${category === value.name && "bg-gray-200"} flex justify-center items-center rounded-md border-2 border-gray-200 hover:shadow-md shadow-inner`}
-                                                                    onClick={() => {
-                                                                        setCategory(value.name)
+                                                                    className={`px-2 py-1 ${formData.category === value.name && "bg-gray-200"} flex justify-center items-center rounded-md border-2 border-gray-200 hover:shadow-md shadow-inner`}
+                                                                    onClick={(e) => {
+                                                                        setFormData(
+                                                                            {
+                                                                                ...formData,
+                                                                                category: value.name
+                                                                            }
+                                                                        )
                                                                     }}
                                                                 >
                                                                     <p className='text-base text-[black]/[0.8] cursor-pointer'>{value.name}</p>
@@ -164,6 +274,14 @@ const NewPost = () => {
                                                         className=' rounded-md text-[black]/[0.8] font-semibold w-full border-2 border-[black]/[0.1] py-2 px-2 outline-none'
                                                         required
                                                         placeholder='Types you tags here seperated by comma'
+                                                        onChange={(e) => {
+                                                            setFormData(
+                                                                {
+                                                                    ...formData,
+                                                                    tags: e.target.value
+                                                                }
+                                                            )
+                                                        }}
                                                     />
                                                 </div>
 
@@ -173,7 +291,20 @@ const NewPost = () => {
                                                         className=' rounded-md h-[200px] resize-none text-[black]/[0.8] font-semibold w-full border-2 border-[black]/[0.1] py-2 px-2 outline-none'
                                                         required
                                                         placeholder='Description'
+                                                        onChange={(e) => {
+                                                            setFormData(
+                                                                {
+                                                                    ...formData,
+                                                                    description: e.target.value
+                                                                }
+                                                            )
+                                                        }}
                                                     />
+                                                </div>
+
+                                                {/* button */}
+                                                <div>
+                                                    <button onClick={uploadHandler} className='bg-blue-700 px-10 py-2 rounded-md font-semibold text-white'>Upload</button>
                                                 </div>
 
                                             </div>
@@ -212,7 +343,7 @@ const NewPost = () => {
                                             <div className='flex justify-center items-center gap-5'>
                                                 <p className='font-bold text-lg'>Drag and drop or</p>
 
-                                                <label class="">
+                                                <label>
                                                     <input onChange={imageHandler} onClick={imageHandler} hidden type="file" name="fileToUpload" id="fileToUpload" />
                                                     <p
                                                         className='bg-green-600  hover:bg-green-500 cursor-pointer transition-all duration-300 ease-in-out text-white font-semibold px-4 rounded-full py-2'

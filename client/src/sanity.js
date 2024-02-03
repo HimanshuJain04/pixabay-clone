@@ -74,3 +74,13 @@ export const deleteAssets = async (id) => {
     return data;
 }
 
+
+export const uploadPost = async (doc) => {
+    await client.create(doc).then((res) => {
+        console.log("res: ", res);
+        return res;
+    }).catch((err) => {
+        console.log("Error : ", err);
+        alert(err);
+    });
+}
