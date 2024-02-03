@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import { Home } from "./containers"
+import { Home, NewPost } from "./containers"
 import { Header, Loader } from "./components"
 import { useEffect } from "react";
 import { firebaseAuth } from "./config/firebase.config";
@@ -48,6 +48,7 @@ function App() {
               {/* routes */}
               <Routes>
                 <Route path="/*" element={<Home />} />
+                <Route path="/post/upload" element={<NewPost />} />
               </Routes>
 
             </main>

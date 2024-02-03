@@ -33,3 +33,44 @@ export const createNewUser = async (data) => {
         });
 }
 
+export const uploadAssets = async (asset) => {
+    let data;
+
+    if (
+        ["image/jpeg",
+            "image/png",
+            "image/gif",
+            "image/jpg",
+        ].includes(asset.type)
+    ) {
+
+        data = await client.assets.upload(
+            "image", asset,
+            {
+                contentType: asset.type,
+                filename: asset.name
+            }
+        );
+
+        return data;
+
+    } else {
+
+        data = await client.assets.upload(
+            "file", asset,
+            {
+                contentType: asset.type,
+                filename: asset.name
+            }
+        );
+
+        return data;
+    }
+
+}
+
+export const deleteAssets = async (id) => {
+    const data = await client.delete(id);
+    return data;
+}
+

@@ -128,7 +128,7 @@ const Header = () => {
                     }
 
                     {/* upload */}
-                    <Link to="/">
+                    <Link to="/post/upload">
                         <div
                             className='bg-green-600 flex gap-1 justify-center items-center hover:bg-green-500 transition-all duration-300 ease-in-out text-white font-semibold px-4 rounded-full py-2'
                         >
