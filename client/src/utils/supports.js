@@ -55,3 +55,44 @@ export const categories = [
     { id: uuidv4(), name: "Health" },
     { id: uuidv4(), name: "Business" },
 ];
+
+
+export const fetchQuery = `*[_type=="post"] | order(_createdAt desc){
+    _id,
+      title,
+      keywords,
+      description,
+      categories,
+      _createdAt,
+      otherMedia{
+      assets->{
+        url
+      }
+      },
+     mainImage{
+      assets->{
+        url
+      }
+      },
+    user->{
+      _id,
+      displayName,
+      imageUrl,
+    },
+      collections[]->{
+         _id,
+      displayName,
+      imageUrl,
+     },
+      comments[]->{
+        _id,
+        comment,
+        _createdAt,
+        user->{
+      _id,
+      displayName,
+      imageUrl,
+    },
+        
+      }
+  }`

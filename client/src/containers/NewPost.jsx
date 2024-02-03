@@ -94,7 +94,7 @@ const NewPost = () => {
                 title: formData.title,
                 keywords: keywords,
                 description: formData.description,
-                fileSource: "image",
+                filesource: "image",
                 categories: formData.category,
                 user: {
                     _type: "reference",
@@ -132,7 +132,7 @@ const NewPost = () => {
                 title: formData.title,
                 keywords: keywords,
                 description: formData.description,
-                fileSource: "others",
+                filesource: "others",
                 categories: formData.category,
                 user: {
                     _type: "reference",
