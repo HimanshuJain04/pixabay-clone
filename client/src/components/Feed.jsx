@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MdBookmark, MdDelete } from "react-icons/md";
 import { MdBookmarkBorder } from "react-icons/md";
 import { useSelector } from "react-redux";
-import { deletePost } from '../sanity';
+import { addToCollection, deletePost } from '../sanity';
 
 const Feed = ({ feed }) => {
 
@@ -17,6 +17,20 @@ const Feed = ({ feed }) => {
                 window.location.reload();
             })
     }
+
+    async function collectionHandler() {
+        if (!alreadySaved) {
+            await addToCollection(feed?._id, user?.uid).then(() => {
+                window.location.reload();
+            });
+        }
+    }
+
+    useEffect(() => {
+        setAlreadySaved(
+            !!(feed?.collections?.filter((item) => item?._id === user?.uid).length)
+        );
+    }, [feed]);
 
 
     return (
@@ -62,7 +76,7 @@ const Feed = ({ feed }) => {
                     isHover && (
                         <>
                             {/* saved */}
-                            <div className='absolute z-10 inset-x-0 top-0 px-3 py-2 flex items-center'>
+                            <div onClick={collectionHandler} className='absolute z-10 inset-x-0 top-0 px-3 py-2 flex items-center'>
                                 <div className={` w-8 h-8 rounded-md flex text-2xl justify-center items-center border  ${alreadySaved ? "border-emerald-400 text-emerald-400 " : "border-gray-100 text-gray-100 "}`}>
                                     {
                                         alreadySaved ? (<MdBookmark />) : (<MdBookmarkBorder />)
@@ -88,7 +102,7 @@ const Feed = ({ feed }) => {
                 }
 
                 {
-                    user.uid === feed?.user?._id && (
+                    user?.uid === feed?.user?._id && (
                         <div onClick={deleteFeed} className='z-10 text-2xl p-2 absolute top-2 right-2 flex justify-center items-center hover:bg-white cursor-pointer  rounded-full bg-[rgba(256,256,256,0.6)]'>
                             <MdDelete />
                         </div>

@@ -13,7 +13,6 @@ const breakPointObj = {
 
 const MisonaryLayout = ({ feeds }) => {
 
-    console.log("feeds: ", feeds)
     return (
         <Masonary
             className='flex'

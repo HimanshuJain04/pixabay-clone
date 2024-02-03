@@ -1,6 +1,7 @@
 import { createClient } from "@sanity/client";
 import imageUrlBuilder from "@sanity/image-url";
 import { fetchQuery } from "./utils/supports";
+import { v4 as uuidv4 } from "uuid";
 
 
 const client = createClient(
@@ -33,6 +34,7 @@ export const createNewUser = async (data) => {
             return res;
         });
 }
+
 
 export const uploadAssets = async (asset) => {
     let data;
@@ -70,6 +72,7 @@ export const uploadAssets = async (asset) => {
 
 }
 
+
 export const deleteAssets = async (id) => {
     const data = await client.delete(id);
     return data;
@@ -91,7 +94,24 @@ export const fetchFeeds = async () => {
     return data;
 }
 
+
 export const deletePost = async (id) => {
     const data = await client.delete(id);
     return data;
+}
+
+
+export const addToCollection = async (id, uid) => {
+    await client
+        .patch(id)
+        .setIfMissing({ collections: [] })
+        .insert("after", "collections[-1]", [
+            {
+                _key: uuidv4(),
+                _type: "reference",
+                _ref: uid
+            }
+        ]
+        )
+        .commit();
 }
