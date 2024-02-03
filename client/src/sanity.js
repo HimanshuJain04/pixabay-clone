@@ -90,3 +90,8 @@ export const fetchFeeds = async () => {
     const data = await client.fetch(fetchQuery);
     return data;
 }
+
+export const deletePost = async (id) => {
+    const data = await client.delete(id);
+    return data;
+}

@@ -85,7 +85,7 @@ const Home = () => {
                         ) : (
                             <div className='w-full items-center justify-between flex flex-wrap gap-3 py-10'>
                                 <MisonaryLayout
-                                    feeds={feeds}
+                                    feeds={feeds?.feeds}
                                 />
                             </div>
                         )
